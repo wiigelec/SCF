@@ -1,0 +1,22 @@
+{
+  "document_id": "SCF-LEVEL-0",
+  "title": "SCF Level 0 Authority",
+  "framework": {
+    "name": "Session Continuity Framework",
+    "abbreviation": "SCF"
+  },
+  "foundation": "SCF Contract Foundation",
+  "level": 0,
+  "version": "1.0.0",
+  "status": "proposed",
+  "authority_role": "durable Level 0 root authority",
+  "canonical_path": "authority/level-0/SCF-LEVEL-0.json",
+  "provenance_source": "authority/core/SCF-CORE.json",
+  "sha256": "36497a8488e0d6e6b7aa78e860e5494af7e38427e5fae55699b0535ef04de3d8",
+  "schema": {
+    "id": "https://wiigelec.github.io/scf/schemas/SCF-LEVEL-0.schema.json",
+    "dialect": "https://json-schema.org/draft/2020-12/schema",
+    "canonical_path": "authority/level-0/SCF-LEVEL-0.schema.json",
+    "sha256": "181cd2e13e2053c4a0deb4f39f0fe27ae63080087b94c1a2e0f220d858171f94"
+  }
+}
