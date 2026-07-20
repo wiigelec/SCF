@@ -207,15 +207,19 @@ class SessionRestorationEntrypointTests(unittest.TestCase):
         self.assertEqual(before, after)
 
     def test_cli_json_contract(self):
-        head = self.git(REPOSITORY_ROOT, "rev-parse", "HEAD")
+        temporary, root, head = self.make_repository()
+        self.addCleanup(temporary.cleanup)
         evidence = self.base_evidence(head)
         with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", suffix=".json", delete=False) as handle:
             json.dump(evidence, handle)
             evidence_path = Path(handle.name)
         self.addCleanup(evidence_path.unlink, missing_ok=True)
+        environment = os.environ.copy()
+        environment["PYTHONPATH"] = str(REPOSITORY_ROOT / "src")
         result = subprocess.run(
             [str(REPOSITORY_ROOT / "scripts/restore-session"), "--evidence", str(evidence_path), "--format", "json"],
-            cwd=REPOSITORY_ROOT,
+            cwd=root,
+            env=environment,
             text=True,
             capture_output=True,
             check=False,
@@ -224,6 +228,10 @@ class SessionRestorationEntrypointTests(unittest.TestCase):
         payload = json.loads(result.stdout)
         self.assertEqual(1, payload["schema_version"])
         self.assertEqual("complete", payload["status"])
+        self.assertEqual(
+            "issue-11-governed-development-session-restoration",
+            payload["repository"]["observed_branch"],
+        )
 
 
 if __name__ == "__main__":
