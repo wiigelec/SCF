@@ -104,7 +104,7 @@ class IssueCommentContractTests(unittest.TestCase):
             {
                 "schema_version": 1,
                 "operation_id": "test.issue-37.issue-comment",
-                "executor_version": "0.4.0",
+                "executor_version": "0.5.0",
                 "operation_digest": "",
                 "result": {
                     "directory": tempfile.gettempdir(),
