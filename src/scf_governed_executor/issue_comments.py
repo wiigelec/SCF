@@ -4,6 +4,7 @@ import hashlib
 import json
 import re
 import tempfile
+import sys
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 from urllib.parse import urlsplit
@@ -476,3 +477,153 @@ def execute_issue_comment(
     core_module.write_result_exclusive(destination, result)
     progress.check("result artifact created without overwrite")
     return result, destination
+
+def load_issue_comment_operation(path: Path) -> dict[str, Any]:
+    try:
+        operation = json.loads(
+            path.read_text(encoding="utf-8"),
+            parse_constant=lambda value: (_ for _ in ()).throw(
+                ValueError(f"non-standard JSON constant: {value}")
+            ),
+        )
+    except OSError as exc:
+        raise core_module.SchemaError(f"cannot read operation: {exc}") from exc
+    except (json.JSONDecodeError, ValueError) as exc:
+        raise core_module.SchemaError(f"invalid operation JSON: {exc}") from exc
+
+    operation = _object(operation, "operation")
+    _exact(
+        operation,
+        core_module.TOP_LEVEL_FIELDS,
+        core_module.TOP_LEVEL_FIELDS,
+        "operation",
+    )
+    if operation["schema_version"] != core_module.OPERATION_SCHEMA_VERSION:
+        raise core_module.SchemaError("unsupported operation schema version")
+    if operation["executor_version"] != core_module.EXECUTOR_VERSION:
+        raise core_module.SchemaError("incompatible executor version")
+    if operation["operation_type"] != ISSUE_COMMENT_OPERATION_TYPE:
+        raise core_module.SchemaError("unsupported issue-comment operation type")
+    if not isinstance(operation["operation_id"], str) or not re.fullmatch(
+        r"[A-Za-z0-9][A-Za-z0-9._-]{7,127}", operation["operation_id"]
+    ):
+        raise core_module.SchemaError("operation_id has invalid form")
+    if not isinstance(operation["operation_digest"], str) or not SHA256.fullmatch(
+        operation["operation_digest"]
+    ):
+        raise core_module.SchemaError(
+            "operation_digest must be lowercase SHA-256"
+        )
+    if operation["operation_digest"] != core_module.operation_digest(operation):
+        raise core_module.SchemaError("operation digest mismatch")
+
+    repository = _object(operation["repository"], "repository")
+    _exact(
+        repository,
+        core_module.REPOSITORY_FIELDS,
+        core_module.REPOSITORY_FIELDS,
+        "repository",
+    )
+    for field in core_module.REPOSITORY_FIELDS:
+        if not isinstance(repository[field], str) or not repository[field]:
+            raise core_module.SchemaError(
+                f"repository.{field} must be a non-empty string"
+            )
+
+    guards = _object(operation["guards"], "guards")
+    _exact(
+        guards,
+        core_module.GUARD_FIELDS,
+        core_module.GUARD_FIELDS,
+        "guards",
+    )
+    if not isinstance(guards["branch"], str) or not guards["branch"]:
+        raise core_module.SchemaError(
+            "guards.branch must be a non-empty string"
+        )
+    if not isinstance(guards["head"], str) or not re.fullmatch(
+        r"[0-9a-f]{40}", guards["head"]
+    ):
+        raise core_module.SchemaError(
+            "guards.head must be a lowercase full commit id"
+        )
+    if not isinstance(guards["clean"], bool):
+        raise core_module.SchemaError("guards.clean must be boolean")
+
+    authorization = _object(operation["authorization"], "authorization")
+    _exact(
+        authorization,
+        core_module.AUTHORIZATION_FIELDS,
+        core_module.AUTHORIZATION_FIELDS,
+        "authorization",
+    )
+    if any(not isinstance(value, bool) for value in authorization.values()):
+        raise core_module.SchemaError("authorization values must be boolean")
+
+    result = _object(operation["result"], "result")
+    _exact(
+        result,
+        core_module.RESULT_FIELDS,
+        core_module.RESULT_FIELDS,
+        "result",
+    )
+    if not isinstance(result["directory"], str) or not result["directory"]:
+        raise core_module.SchemaError(
+            "result.directory must be a non-empty string"
+        )
+    if not isinstance(result["filename"], str) or not re.fullmatch(
+        r"[A-Za-z0-9][A-Za-z0-9._-]{7,191}\.result\.json",
+        result["filename"],
+    ):
+        raise core_module.SchemaError("result.filename has invalid form")
+    return validate_issue_comment_contract(operation)
+
+
+def issue_comment_main(argv: Sequence[str] | None = None) -> int:
+    args = list(sys.argv[1:] if argv is None else argv)
+    if len(args) != 1:
+        print(
+            "usage: ./scripts/governed-execute /path/to/operation.json",
+            file=sys.stderr,
+        )
+        return 64
+    operation_path = Path(args[0]).expanduser().resolve()
+    destination: Path | None = None
+    progress = core_module.TerminalProgress()
+    try:
+        print(f"Governed Executor {core_module.EXECUTOR_VERSION}", flush=True)
+        progress.phase(1, "validating issue-comment operation description")
+        operation = load_issue_comment_operation(operation_path)
+        destination = core_module.result_destination(
+            operation,
+            Path(operation["repository"]["root"]).expanduser().resolve(),
+        )
+        progress.check("closed issue-comment contract verified")
+        progress.check("authorization separation verified")
+        progress.check("operation digest verified")
+        print("", flush=True)
+        print(f"Repository : {operation['repository']['root']}", flush=True)
+        print(f"Revision   : {operation['guards']['head']}", flush=True)
+        print(f"Operation  : {operation['operation_id']}", flush=True)
+        print(f"Type       : {operation['operation_type']}", flush=True)
+        print(f"Result     : {destination}", flush=True)
+        print("", flush=True)
+        result, destination = execute_issue_comment(operation, progress)
+        print("", flush=True)
+        print("-" * 60, flush=True)
+        print(f"STATUS: {result['terminal_status']}", flush=True)
+        print("", flush=True)
+        print("Result:", flush=True)
+        print(f"  {destination}", flush=True)
+        print("", flush=True)
+        print("Next step:", flush=True)
+        print(f"  {result['safest_next_interaction']}", flush=True)
+        return 0 if result["terminal_status"] == "publication-completed" else 1
+    except core_module.ExecutorError as exc:
+        print("", file=sys.stderr, flush=True)
+        print("-" * 60, file=sys.stderr, flush=True)
+        print("STATUS: executor-failed", file=sys.stderr, flush=True)
+        print(f"Reason: {exc}", file=sys.stderr, flush=True)
+        if destination is not None:
+            print(f"Result: {destination}", file=sys.stderr, flush=True)
+        return 1

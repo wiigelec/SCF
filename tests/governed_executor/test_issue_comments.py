@@ -1,10 +1,15 @@
 from __future__ import annotations
 
+import hashlib
+import json
+import tempfile
 import unittest
+from pathlib import Path
 
 from scf_governed_executor.core import AUTHORIZATION_FIELDS, SchemaError
 from scf_governed_executor.issue_comments import (
     ISSUE_COMMENT_OPERATION_TYPE,
+    load_issue_comment_operation,
     validate_issue_comment_contract,
 )
 
@@ -53,7 +58,6 @@ def operation(action: str = "create") -> dict:
 class IssueCommentContractTests(unittest.TestCase):
     def test_accepts_closed_create_contract(self) -> None:
         value = operation()
-        import hashlib
         value["expected_mutations"]["body_sha256"] = hashlib.sha256(
             value["inputs"]["body"].encode()
         ).hexdigest()
@@ -62,7 +66,6 @@ class IssueCommentContractTests(unittest.TestCase):
 
     def test_accepts_explicit_update_identifier(self) -> None:
         value = operation("update")
-        import hashlib
         value["expected_mutations"]["body_sha256"] = hashlib.sha256(
             value["inputs"]["body"].encode()
         ).hexdigest()
@@ -93,6 +96,40 @@ class IssueCommentContractTests(unittest.TestCase):
         value["expected_mutations"]["comment_id"] = 0
         with self.assertRaisesRegex(SchemaError, "positive integer"):
             validate_issue_comment_contract(value)
+
+
+    def test_complete_operation_loader_accepts_exact_contract(self) -> None:
+        value = operation()
+        value.update(
+            {
+                "schema_version": 1,
+                "operation_id": "test.issue-37.issue-comment",
+                "executor_version": "0.4.0",
+                "operation_digest": "",
+                "result": {
+                    "directory": tempfile.gettempdir(),
+                    "filename": "test.issue-37.issue-comment.result.json",
+                },
+            }
+        )
+        value["expected_mutations"]["body_sha256"] = hashlib.sha256(
+            value["inputs"]["body"].encode()
+        ).hexdigest()
+        body = dict(value)
+        body.pop("operation_digest")
+        value["operation_digest"] = hashlib.sha256(
+            json.dumps(
+                body,
+                sort_keys=True,
+                separators=(",", ":"),
+                ensure_ascii=False,
+            ).encode()
+        ).hexdigest()
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "operation.json"
+            path.write_text(json.dumps(value), encoding="utf-8")
+            loaded = load_issue_comment_operation(path)
+        self.assertEqual(loaded["operation_type"], ISSUE_COMMENT_OPERATION_TYPE)
 
 
 if __name__ == "__main__":
