@@ -8,7 +8,7 @@ from . import core as core_module
 from . import local_files
 
 
-core_module.EXECUTOR_VERSION = "0.2.0"
+core_module.EXECUTOR_VERSION = "0.2.1"
 
 
 PROTECTED_EXECUTOR_PATHS = frozenset(
@@ -44,6 +44,7 @@ def _validate_unprotected_local_file_inputs(inputs, expected_mutations):
 
 
 local_files.validate_local_file_inputs = _validate_unprotected_local_file_inputs
+core_module.validate_local_file_inputs = _validate_unprotected_local_file_inputs
 
 
 def _operation_type(argv: list[str]) -> str | None:

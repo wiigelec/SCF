@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -503,6 +504,23 @@ def _restore(
     return records, verified_all
 
 
+
+def _purge_bytecode(root: Path) -> list[str]:
+    removed: list[str] = []
+    for relative in (
+        "src/scf_governed_executor/__pycache__",
+        "tests/governed_executor/__pycache__",
+    ):
+        target = root / relative
+        if target.exists():
+            shutil.rmtree(target)
+            removed.append(relative)
+    return removed
+
+
+def _status_paths(status: Sequence[str]) -> list[str]:
+    return sorted(line[3:] for line in status)
+
 def _run_checked(
     supervisor: CommandSupervisor,
     command: Sequence[str],
@@ -628,6 +646,9 @@ def execute_self_update(
         mutation_observed = bool(records)
         result["mutation"]["observed"] = mutation_observed
         result["self_update"]["file_operations"] = records
+        result["self_update"]["bytecode_removed_before_validation"] = (
+            _purge_bytecode(root)
+        )
         progress.check("replacement bytes and modes verified")
 
         profile = operation["inputs"]["validation_profile"]
@@ -700,6 +721,20 @@ def execute_self_update(
         ending_commands, ending_state = capture_repository_state(root, supervisor)
         result["commands"].extend(ending_commands)
         result["ending_state"] = ending_state
+        expected_paths = sorted(
+            operation_item["path"]
+            for operation_item in operation["_normalized_operations"]
+        )
+        observed_paths = _status_paths(ending_state["status"])
+        if observed_paths != expected_paths:
+            raise SelfUpdateError(
+                "repository mutation escaped declared self-update inventory",
+                evidence={
+                    "expected_paths": expected_paths,
+                    "observed_paths": observed_paths,
+                },
+                mutation_observed=True,
+            )
         result["mutation"]["completed"] = True
         result["terminal_status"] = "local-mutation-completed"
         result["safest_next_interaction"] = (
@@ -718,6 +753,16 @@ def execute_self_update(
         if result["mutation"]["observed"] and root is not None and before:
             rollback, rollback_verified = _restore(root, before)
             result["self_update"]["rollback"] = rollback
+            result["self_update"]["bytecode_removed_after_rollback"] = (
+                _purge_bytecode(root)
+            )
+            rollback_commands, rollback_state = capture_repository_state(
+                root, supervisor
+            )
+            result["commands"].extend(rollback_commands)
+            result["self_update"]["rollback_state"] = rollback_state
+            repository_restored = rollback_state["clean"]
+            rollback_verified = rollback_verified and repository_restored
             result["self_update"]["rollback_verified"] = rollback_verified
             result["terminal_status"] = (
                 "post-mutation-validation-failed"
