@@ -10,10 +10,8 @@ hierarchy, `docs/OFFICIAL-GOVERNED-DEVELOPMENT-PROCESS.md`, the governing issue,
 and its designated planning records. It does not create product authority,
 semantic acceptance, merge authority, or permission for successor work.
 
-Until the Issue #31 process amendment is explicitly accepted and merged to
-`main`, the guarded bespoke-script protocol established by Issue #24 remains
-the authoritative mutation transport. This document is therefore prospective
-on the Issue #31 branch.
+This document specifies the accepted repository-native governed executor and
+its declarative operation boundary for supported governed operations.
 
 ## Purpose
 
@@ -413,32 +411,25 @@ The executor fails closed when:
 The executor preserves partial-application evidence. It must not claim rollback
 unless rollback was explicitly authorized, attempted, and verified.
 
-## Compatibility and prospective supersession of Issue #24
+## Compatibility and retained guarantees
 
-Issue #24 remains historical accepted evidence and continues to govern all
-mutation while Issue #31 is unaccepted branch work.
+Repository-supported governed operations use the versioned executor and
+declarative operation descriptions. Security-critical mechanics are executor
+requirements rather than transient operation logic.
 
-After Issue #31 is accepted and merged:
+The executor retains unique operation and result identity, one-command
+execution, explicit user execution, progress, heartbeat, no-overwrite, exact
+guards, complete evidence, result upload, and review-before-successor
+requirements.
 
-- repository-supported governed operations use the versioned executor and
-  declarative operation descriptions;
-- the security-critical mechanics formerly required in each bespoke script
-  become executor requirements;
-- unique operation and result identity, one-command execution, explicit user
-  execution, progress, heartbeat, no-overwrite, exact guards, complete evidence,
-  result upload, and review-before-successor requirements are retained;
-- a bootstrap wrapper may only locate the repository, verify the expected
-  executor revision or version, and invoke the entrypoint with declarative data;
-- a wrapper may not implement mutation, command supervision, redaction,
-  accounting, result generation, or remote verification;
-- unsupported operation classes fail closed unless a separately accepted
-  transitional exception explicitly authorizes another path;
-- accepted historical results created under Issue #24 remain valid evidence for
-  the work they recorded.
+Operation descriptions may not redefine guard semantics, command construction,
+redaction, mutation accounting, result generation, or remote verification.
+Unsupported operation classes fail closed unless a separately accepted process
+change adds the required capability.
 
-Exact edits to the official process, session-initialization standard, planning
-document, README, and discovery surfaces are reserved for the process-transition patch.
-This specification does not itself make the transition effective.
+Accepted historical execution results remain evidence for the work they
+recorded. Historical evidence does not authorize new work or an unsupported
+mutation path.
 
 ## Threat analysis
 
@@ -506,29 +497,24 @@ permanent tests cover at least:
 - secret redaction across arguments, stdout, stderr, environment-derived data,
   and credential-bearing URLs;
 - successful local mutation, commit, and verified publication;
-- Issue #24 compatibility and transition behavior.
+- compatibility and retained executor guarantees.
 
 Mechanical conformance does not replace full-diff review, threat review,
 semantic acceptance, CI, merge, or issue closure.
 
-## Prospective transition and supersession
+## Effective operation boundary
 
-This specification becomes effective only after Issue #31 is explicitly
-accepted and merged to `main`. Until then, the Issue #24 guarded downloadable
-script protocol remains controlling for Issue #31 implementation.
+This specification is effective repository policy for supported governed
+operations.
 
-After effectiveness, new governed operations use this executor when it supports
-the required operation class. Existing accepted work and historical evidence
-under Issue #24 remain valid. Already-open work continues under its original
-process unless explicitly migrated.
+New governed operations use the executor when it supports the required
+operation class. Accepted historical work remains valid evidence for the work it
+recorded, but does not authorize new operations or unsupported capabilities.
 
-The amendment prospectively replaces the requirement that transient operation
-material reimplement security-critical mechanics in a bespoke Python script.
-Those mechanics are instead owned by the reviewed executor. A compatibility
+Security-critical mechanics are owned by the reviewed executor. A compatibility
 wrapper may locate and verify the executor and invoke a declarative operation,
 but may not reconstruct guard, command, redaction, mutation-accounting, result,
 or verification logic.
 
-Unsupported operations fail closed. They may use a separately governed
-transition exception, but never silently fall back to arbitrary shell or
-unrestricted bespoke scripts.
+Unsupported operations fail closed. They never silently fall back to arbitrary
+shell, unrestricted scripts, or direct connector mutation.

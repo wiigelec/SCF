@@ -74,7 +74,7 @@ Issue #12 was implemented at `06c493c4105c08099251ab84eb79f6c588b9bba0` and acce
 | Repository development validation gate | #8 | Complete | #7 |
 | Continuous-integration enforcement | #9 | Complete | #8 |
 | Official governed development process | #10 | Complete | #5, #7, #8, #9 |
-| Governed development-session initialization | #24 | Complete | #11 |
+| Governed development-session initialization | — | Complete | #11 |
 | Bootstrap-to-development transition | #12 | Complete | #4, #5, #7, #8, #9, #10, #11 |
 
 Issue #7 preferably follows #5 even though #5 is not a strict predecessor.
@@ -153,7 +153,7 @@ certification, acceptance, and closure into one event.
 
 ### F7 — Session-context restoration
 
-**Issue:** #24, **Replace session restoration with governed development-session initialization**
+**Work item:** **Replace session restoration with governed development-session initialization**
 
 **Purpose:** Allow a new assistant-user session to recover the current governed
 development state from repository, branch, planning, validation, and local
@@ -212,10 +212,10 @@ missing predecessor capability or waiving an unmet criterion.
    process rather than a temporary bootstrap convention.
 
 7. **#4, #5, #7, #8, #9, #10, and the accepted session-initialization
-   successor work from #24 precede #12.**
+   successor work precede #12.**
    The transition issue verifies the complete foundation and must not implement
-   a missing predecessor. Issue #24 supplies the current capability that
-   replaced the earlier #11 session-restoration framing.
+   a missing predecessor. The accepted successor work supplies the current
+   capability that replaced the earlier #11 session-restoration framing.
 
 ### Preferred ordering
 
@@ -256,7 +256,7 @@ After #4 is accepted:
 #7 ──────────────────────────────────────────┤
 #10 ─────────────────────────────────────────┴──► #11 Session restoration
 
-#4, #5, #7, #8, #9, #10, #11, #24 ───────────► #12 Bootstrap transition
+#4, #5, #7, #8, #9, #10, #11, session initialization ─► #12 Bootstrap transition
 ```
 
 ## Recommended implementation sequence
@@ -267,7 +267,7 @@ After #4 is accepted:
 4. Complete #8 — **Establish the repository development validation gate**.
 5. Complete #9 — **Add continuous-integration enforcement**.
 6. Complete #10 — **Establish the official governed development process**.
-7. Complete #24 — **Replace session restoration with governed development-session initialization**.
+7. Complete **Replace session restoration with governed development-session initialization**.
 8. Complete #12 — **Complete the bootstrap-to-development transition**.
 
 This is a recommended sequence, not authorization to begin an issue. Every
@@ -299,8 +299,8 @@ an official durable process.
 
 ### Milestone D — Recoverable normal-development foundation
 
-Satisfied when the accepted session-initialization successor work from #24
-and Issue #12 are accepted and merged into `main`.
+Satisfied when the accepted session-initialization successor work and Issue #12
+are accepted and merged into `main`.
 
 A new session can recover the governed frontier, and the repository has
 explicitly completed the transition from provisional bootstrap development to

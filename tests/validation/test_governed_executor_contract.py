@@ -72,13 +72,13 @@ class GovernedExecutorContractTests(unittest.TestCase):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, self.text)
 
-    def test_issue_24_transition_is_prospective(self) -> None:
+    def test_effective_executor_policy_is_present(self) -> None:
         self.assertIn(
-            "Issue #24 remains historical accepted evidence and continues to govern",
+            "Repository-supported governed operations use the versioned executor",
             self.text,
         )
         self.assertIn(
-            "reserved for the process-transition patch",
+            "Unsupported operation classes fail closed",
             self.text,
         )
 
@@ -89,13 +89,13 @@ if __name__ == "__main__":
 class GovernedExecutorTransitionContractTests(unittest.TestCase):
     def test_session_standard_names_repository_entrypoint(self) -> None:
         text = (ROOT / "docs/GOVERNED-DEVELOPMENT-SESSION-INITIALIZATION.md").read_text()
-        self.assertIn("./scripts/governed-execute /path/to/<unique-operation>.json", text)
+        self.assertIn("./scripts/governed-execute ~/Downloads/<unique-operation-name>.operation.json", text)
         self.assertIn("There is no silent fallback", text)
 
-    def test_official_process_preserves_issue_24_history(self) -> None:
+    def test_official_process_states_current_executor_policy(self) -> None:
         text = (ROOT / "docs/OFFICIAL-GOVERNED-DEVELOPMENT-PROCESS.md").read_text()
-        self.assertIn("Issue #24 remains valid historical evidence", text)
-        self.assertIn("prospectively supersedes only", text)
+        self.assertIn("Governed operations use the repository-native governed executor", text)
+        self.assertIn("Unsupported operation classes remain blocked", text)
 
     def test_planning_requires_executor_owned_boundary(self) -> None:
         text = (ROOT / "docs/GOVERNED-ISSUE-PLANNING.md").read_text()
@@ -104,5 +104,5 @@ class GovernedExecutorTransitionContractTests(unittest.TestCase):
 
     def test_executor_spec_states_effective_boundary(self) -> None:
         text = (ROOT / "docs/GOVERNED-EXECUTOR.md").read_text()
-        self.assertIn("becomes effective only after Issue #31", text)
+        self.assertIn("This specification is effective repository policy", text)
         self.assertIn("Unsupported operations fail closed", text)
