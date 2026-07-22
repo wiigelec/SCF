@@ -66,7 +66,7 @@ root:
 ```
 
 Unsupported operation classes remain blocked; there is no fallback to
-agent-generated mutation scripts.
+unguarded mutation paths.
 
 For a normal clean checkout, a `repository-initialize` operation can derive the
 current branch, exact `HEAD`, local `main`, and canonical `origin/main` state

@@ -22,18 +22,18 @@ class GovernedDevelopmentSessionInitializationTests(unittest.TestCase):
             "# Governed Development Session Initialization and Interaction",
             "## Remote session orientation",
             "## Local-tree initialization",
-            "## Prospective governed-executor transition",
-            "default execution boundary",
-            "./scripts/governed-execute /path/to/<unique-operation>.json",
+            "## Governed executor boundary",
+            "standard execution boundary",
+            "./scripts/governed-execute ~/Downloads/<unique-operation-name>.operation.json",
             "There is no silent fallback",
-            "## Legacy guarded-script protocol and historical work",
-            "python ~/Downloads/<unique-script-name>.py",
-            "safe to copy directly into `zsh`",
+            "## Single result artifact",
+            "one uniquely named declarative operation description",
+            "one literal executor command",
         )
 
     def test_guard_result_and_recovery_contract(self) -> None:
         self.assert_required(
-            "## Script guard contract",
+            "## Operation guard contract",
             "## Mutation boundary",
             "## Terminal progress and heartbeat",
             "periodic heartbeat messages",
@@ -45,15 +45,16 @@ class GovernedDevelopmentSessionInitializationTests(unittest.TestCase):
             "`partial-local-mutation`",
             "`partial-remote-mutation`",
             "`mutation-completed-validation-failed`",
-            "`completed-and-committed`",
-            "`completed-and-published`",
+            "completed commit",
+            "completed validation",
+            "completed commit or publication",
         )
 
     def test_publication_and_authority_boundaries(self) -> None:
         self.assert_required(
             "## Commit, push, and remote GitHub operations",
-            "standard `git` commands to push",
-            "standard `gh` commands",
+            "executor-recognized operation types",
+            "executor-owned `git` and `gh` commands",
             "Remote success is verified by reading the resulting remote object",
             "## Evidence and authority boundary",
             "not accepted repository authority",

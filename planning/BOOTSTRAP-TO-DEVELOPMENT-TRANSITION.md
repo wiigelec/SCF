@@ -45,12 +45,12 @@ anchored in accepted commits present in the first-parent history of `main`.
 | Repository development validation gate | #8 | `7f039190e6723c997523c13142ab3103f0468d1a` | `3e6208f37d9bb6c0ec09eea8f8b320599e72a85b` | validation modes, certification behavior, documentation, and tests |
 | Continuous-integration enforcement | #9 | `ee4b14436cfe395829db2cc980ebd4a2d7cc3745` | `3da39b6cfa42ac15c425447776a831afabe3bbed` | `.github/workflows/` and CI validation tests |
 | Official governed development process | #10 | `158d0fe4b4b46f04af30bc10995f7c8b6cce580f` | `f8764d5d77146f09fe019fc499405fdd59c8a2e7` | `docs/OFFICIAL-GOVERNED-DEVELOPMENT-PROCESS.md` |
-| Governed session restoration foundation | #11 | `1d2a81687879186876fa76a918c701947414dc91` | `d808157d152ddb518bcd8fac477e57a96a2253e9` | accepted predecessor foundation later replaced in scope and naming by #24 |
-| Governed development-session initialization | #24 | `844c096c21b77d8a83903d93ff4b5be146756874` | `381d8fd740e97c6000a3f54510a234b0c2f47209` | `docs/GOVERNED-DEVELOPMENT-SESSION-INITIALIZATION.md` and aligned process, planning, README, and tests |
+| Governed session restoration foundation | #11 | `1d2a81687879186876fa76a918c701947414dc91` | `d808157d152ddb518bcd8fac477e57a96a2253e9` | accepted predecessor foundation later replaced in scope and naming |
+| Governed development-session initialization | — | `844c096c21b77d8a83903d93ff4b5be146756874` | `381d8fd740e97c6000a3f54510a234b0c2f47209` | `docs/GOVERNED-DEVELOPMENT-SESSION-INITIALIZATION.md` and aligned process, planning, README, and tests |
 
-Issue #24 is the accepted successor to the earlier Issue #11
+The accepted development-session initialization work succeeds the earlier Issue #11
 session-restoration framing. The accepted Issue #11 merge remains historical
-foundation evidence; Issue #24 supplies the current capability and terminology.
+foundation evidence; the successor work supplies the current capability and terminology.
 
 ## Bootstrap completion criteria assessment
 
@@ -109,10 +109,10 @@ rules.
 
 **Satisfied on the assessed base.**
 
-The accepted Issue #24 change enables a new session to reconstruct authority,
-planning state, validation, lifecycle frontier, and the next bounded operation
-without relying on prior conversation history. It replaces the earlier Issue
-#11 session-restoration framing while preserving that accepted history.
+The accepted development-session initialization change enables a new session to
+reconstruct authority, planning state, validation, lifecycle frontier, and the
+next bounded operation without relying on prior conversation history. It replaces
+the earlier Issue #11 session-restoration framing while preserving that accepted history.
 
 ### Criterion 8 — Explicit provisional-process supersession
 
@@ -127,8 +127,8 @@ satisfies the repository-wide bootstrap-completion transition.
 
 **Satisfied by accepted merge and closure evidence.**
 
-Issues #4, #5, #7, #8, #9, #10, #11, and the accepted successor work in #24
-are represented in `main`. Issue #12 was accepted by merge commit `6fef89c06aad8d2e02753d532782882498df492d`
+Issues #4, #5, #7, #8, #9, #10, #11, and the accepted session-initialization
+successor work are represented in `main`. Issue #12 was accepted by merge commit `6fef89c06aad8d2e02753d532782882498df492d`
 and subsequently closed.
 
 ### Criterion 10 — No transient or issue-state-only completion claim
