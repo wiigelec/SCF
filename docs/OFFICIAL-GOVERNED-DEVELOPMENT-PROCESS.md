@@ -379,29 +379,26 @@ A later official process may amend or supersede this one only through an accepte
 repository-wide process change with explicit parent, scope, transition, and
 supersession rules.
 
-## Governed-executor amendment and Issue #24 transition
+## Governed-executor policy
 
-Upon acceptance and merge of Issue #31, new governed operations use the
-repository-native governed executor and declarative operation descriptions when
-the accepted executor implements the required operation class.
+Governed operations use the repository-native governed executor and uniquely
+identified declarative operation descriptions for operation classes implemented
+by the accepted executor.
 
-This amendment prospectively supersedes only the Issue #24 requirements that
-each new governed mutation must be implemented by a bespoke agent-generated
-Python script, invoked through the literal `python` command, and write its result
-specifically to `~/Downloads`. Those mechanics become executor requirements:
-bounded authorization, exact guards, immediate progress and heartbeat,
-redaction, mutation accounting, non-overwriting result evidence, and verified
-postconditions.
+The executor owns bounded authorization, exact guards, privileged command
+construction, immediate progress and heartbeat, redaction, mutation accounting,
+non-overwriting result evidence, and verified postconditions. An operation
+description is declarative data and may select only an executor-recognized
+operation type and bounded inputs.
 
-Issue #24 remains valid historical evidence. Work properly completed under it is
-not retroactively invalidated. Already-open work continues under the process
-authoritative when it began unless an explicit governed decision migrates it.
-Unsupported executor operation classes remain blocked or require a documented
-transition exception; they do not silently fall back to unrestricted scripts.
+Unsupported operation classes remain blocked unless a separately governed
+process change adds the required capability. They do not silently fall back to
+unrestricted scripts, direct chatbot connector writes, or other ungoverned
+mutation paths.
 
 The executor does not change the separate authority of Git, GitHub Issues, pull
-requests, CI, review, acceptance, merge, or closure. It does not authorize direct
-unguarded chatbot mutation or connector writes.
+requests, CI, review, acceptance, merge, or closure. Authorization for one
+operation boundary does not imply authorization for another.
 
 ## Development-session initialization and interaction
 
@@ -423,11 +420,10 @@ governed interaction mechanism. The interrogation establishes repository
 identity, branch, exact `HEAD`, accepted-base relationship, upstream and
 divergence, working-tree state, local commits, changed files, and blockers.
 
-After the Issue #31 amendment becomes effective, supported operations are
-performed through `scripts/governed-execute` with one uniquely identified
-declarative operation description. The user invokes the repository-native
-entrypoint with one literal command and returns the executor's single unique
-non-overwriting result artifact for review.
+Supported operations are performed through `scripts/governed-execute` with one
+uniquely identified declarative operation description. The user invokes the
+repository-native entrypoint with one literal command and returns the executor's
+single unique non-overwriting result artifact for review.
 
 The executor prints immediate progress and periodic heartbeat messages,
 constructs privileged commands from its reviewed capability definitions,
