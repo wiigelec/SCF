@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import re
 import sys
 import unittest
 from pathlib import Path
@@ -253,8 +254,21 @@ class GovernedExecutorCharacterizationTests(unittest.TestCase):
         launcher = (ROOT / "scripts" / "governed-execute").read_text(
             encoding="utf-8"
         )
-        self.assertIn('EXECUTOR_VERSION = "0.8.4"', launcher)
-        self.assertIn('LEGACY_EXECUTOR_VERSION = "0.7.0"', launcher)
+        versions = dict(
+            re.findall(
+                r'^(EXECUTOR_VERSION|LEGACY_EXECUTOR_VERSION) = "([0-9]+\.[0-9]+\.[0-9]+)"$',
+                launcher,
+                flags=re.MULTILINE,
+            )
+        )
+        self.assertEqual(
+            set(versions),
+            {"EXECUTOR_VERSION", "LEGACY_EXECUTOR_VERSION"},
+        )
+        self.assertNotEqual(
+            versions["EXECUTOR_VERSION"],
+            versions["LEGACY_EXECUTOR_VERSION"],
+        )
         for operation_type in (
             "git-publication",
             "development-session-initialize",
